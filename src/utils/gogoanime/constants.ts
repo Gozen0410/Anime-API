@@ -16,10 +16,14 @@ type GogoAnimeConfig = {
 
 const gogoanime: AnimeWebsiteConfig = websites_collection["GogoAnime"];
 let gogoanime_base = gogoanime.BASE;
-const clones_array: string[] = [
-  gogoanime.BASE,
-  ...Object.values(gogoanime.CLONES ?? {}).flat(),
-];
+const clones_array: string[] = [gogoanime.BASE];
+
+if (gogoanime.CLONES) {
+  for (const key in gogoanime.CLONES) {
+    if (Object.prototype.hasOwnProperty.call(gogoanime.CLONES, key))
+      clones_array.push(...gogoanime.CLONES[key]);
+  }
+}
 
 // Build every scraper route from the same selected domain. Previously BASE
 // stayed on the original domain even after a fallback was selected.
