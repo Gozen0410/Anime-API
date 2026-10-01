@@ -8,22 +8,23 @@ export type AnimeWebsiteConfig = WebsiteConfig & {
 
 type Websites = Record<string, AnimeWebsiteConfig>;
 
-// anime websites and their clones
+// Anime website domains are ordered by preference. Each source's URL helper
+// probes BASE first, then CLONES, and builds all routes from the first live
+// domain. Keep provider domains here so domain changes do not require editing
+// route or scraper code.
 export const websites_collection: Websites = {
   AniWatch: {
-    BASE: "https://aniwatchtv.to",
+    BASE: "https://aniwatch.co.at",
     CLONES: {
-      HiAnime: [
-        "https://hianimez.is",
-        "https://hianimez.to",
-        "https://hianime.nz",
-        "https://hianime.bz",
-        "https://hianime.pe",
-      ],
+      AniWatch: ["https://aniwatchtv.ro"],
+      HiAnime: ["https://hianimes.se", "https://hianime.lu"],
     },
   },
   GogoAnime: {
-    BASE: "https://ww24.gogoanimes.fi",
+    BASE: "https://gogoanime.or.at",
+    CLONES: {
+      GogoAnime: ["https://www.gogoanimes.watch"],
+    },
   },
   KickAssAnime: {
     BASE: "https://kickass-anime.ro",
