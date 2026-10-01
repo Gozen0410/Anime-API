@@ -15,57 +15,43 @@ type GogoAnimeConfig = {
 };
 
 const gogoanime: AnimeWebsiteConfig = websites_collection["GogoAnime"];
-// storing initial base link
 let gogoanime_base = gogoanime.BASE;
-// array of clones
-let clones_array: string[] = [];
-clones_array.push(gogoanime_base);
+const clones_array: string[] = [gogoanime.BASE];
 
 if (gogoanime.CLONES) {
-  const gogoanime_clones: Record<string, string[]> = gogoanime.CLONES;
-
-  for (const key in gogoanime_clones) {
-    if (Object.prototype.hasOwnProperty.call(gogoanime_clones, key)) {
-      const values: string[] = gogoanime_clones[key];
-      clones_array.push(...values);
-    }
+  for (const key in gogoanime.CLONES) {
+    if (Object.prototype.hasOwnProperty.call(gogoanime.CLONES, key))
+      clones_array.push(...gogoanime.CLONES[key]);
   }
 }
 
-// Testing
-// console.log(clones_array);
+// Build every scraper route from the same selected domain. Previously BASE
+// stayed on the original domain even after a fallback was selected.
+const makeGogoAnimeObj = (base: string): GogoAnimeConfig => ({
+  BASE: base,
+  HOME: `${base}/home.html`,
+  SEARCH: `${base}/search.html`,
+  CATEGORY: `${base}/category/`,
+  MOVIES: `${base}/anime-movies.html`,
+  POPULAR: `${base}/popular.html`,
+  NEW_SEASON: `${base}/new-season.html`,
+  SEASONS: `${base}/sub-category/`,
+  COMPLETED: `${base}/completed-anime.html`,
+  AJAX: "https://ajax.gogocdn.net/ajax",
+});
 
-// make new gogoanimeobj using new gogoanime_base
-const makeGogoAnimeObj = (gogoanime_base: string): GogoAnimeConfig => {
-  // Testing
-  // console.log(gogoanime_base);
-  return {
-    BASE: gogoanime.BASE,
-    HOME: `${gogoanime_base}/home.html`,
-    SEARCH: `${gogoanime_base}/search.html`,
-    CATEGORY: `${gogoanime_base}/category/`,
-    MOVIES: `${gogoanime_base}/anime-movies.html`,
-    POPULAR: `${gogoanime_base}/popular.html`,
-    NEW_SEASON: `${gogoanime_base}/new-season.html`,
-    SEASONS: `${gogoanime_base}/sub-category/`,
-    COMPLETED: `${gogoanime_base}/completed-anime.html`,
-    AJAX: "https://ajax.gogocdn.net/ajax",
-  };
-};
-
-// return fn
 const URL_fn = async (): Promise<GogoAnimeConfig> => {
   try {
     for (const url of clones_array) {
-      if (await isSiteReachable(url as string)) {
+      if (await isSiteReachable(url)) {
         gogoanime_base = url;
-        break;
+        return makeGogoAnimeObj(gogoanime_base);
       }
     }
-    return makeGogoAnimeObj(gogoanime_base as string);
+    throw new Error("No configured GogoAnime domain is reachable");
   } catch (error) {
-    console.error("Error occurred in both sites:", error);
-    throw error; // Rethrow the error to handle it outside
+    console.error("Unable to select a reachable GogoAnime domain:", error);
+    throw error;
   }
 };
 
