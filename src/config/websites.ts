@@ -27,6 +27,9 @@ export const websites_collection: Websites = {
     },
   },
   KickAssAnime: {
-    BASE: "https://kickass-anime.ro",
+    BASE: "https://kaa.lt",
+    CLONES: {
+      KickAssAnime: ["https://kickass-anime.ro"],
+    },
   },
 };
